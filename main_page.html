@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIToo - Trade with Brain</title>
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        body {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        body.dark-theme {
+            background-color: #121212;
+            color: #f5f5f5;
+        }
+        header {
+            background: white;
+            padding: 10px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        body.dark-theme header {
+            background: #1e1e1e;
+        }
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .btn-menu {
+            display: flex;
+            gap: 15px;
+        }
+        .btn-menu button {
+            background: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.2s ease;
+            border: none;
+            font-size: 18px;
+            font-weight: 700;
+            color: #000000;
+        }
+        body.dark-theme .btn-menu button {
+            color: #4CAF50;
+        }
+        .btn-menu button:hover {
+            color: #4CAF50;
+            transform: scale(1.1);
+        }
+        .btn-menu button:active {
+            transform: scale(0.9);
+        }
+        .controls-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        button {
+            font-size: 20px;
+            padding: 10px 20px;
+            border: 2px solid #2E7D32;
+            background: transparent;
+            color: #2E7D32;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        body.dark-theme button {
+            border-color: #4CAF50;
+            color: #4CAF50;
+        }
+        button:hover {
+            background-color: rgba(46, 125, 50, 0.1);
+            transform: scale(1.05);
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        .theme-switcher {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .theme-switcher input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: background-color 0.3s ease;
+            border-radius: 34px;
+        }
+        .slider:before {
+            content: "☀️";
+            position: absolute;
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: transform 0.4s ease, background-color 0.4s ease;
+        }
+        input:checked + .slider {
+            background-color: #4CAF50;
+        }
+        input:checked + .slider:before {
+            content: "🌙";
+            transform: translateX(26px);
+        }
+        .hero {
+            background: linear-gradient(to right, #2E7D32, #4CAF50);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+        }
+        body.dark-theme .hero {
+            background: linear-gradient(to right, #1e1e1e, #2E7D32);
+        }
+        .hero h2 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 40px;
+        }
+        .hero button {
+            background: black;
+            color: white;
+            font-size: 24px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        body.dark-theme .hero button {
+            background: #4CAF50;
+            color: white;
+        }
+        .hero button:hover {
+            transform: scale(1.05);
+        }
+        .features {
+            display: flex;
+            justify-content: space-around;
+            padding: 60px 20px;
+            background: #f9f9f9;
+        }
+        body.dark-theme .features {
+            background: #1e1e1e;
+        }
+        .feature {
+            text-align: center;
+            max-width: 300px;
+        }
+        .feature h3 {
+            font-size: 24px;
+            color: #2E7D32;
+            margin-bottom: 10px;
+        }
+        body.dark-theme .feature h3 {
+            color: #4CAF50;
+        }
+        .feature p {
+            font-size: 19px;
+            color: #555;
+        }
+        body.dark-theme .feature p {
+            color: #f5f5f5;
+        }
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            margin: 20px auto;
+        }
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+        .currency-table {
+            padding: 20px;
+            background: white;
+            text-align: center;
+        }
+        body.dark-theme .currency-table {
+            background: #121212;
+        }
+        table {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f9f9f9;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        body.dark-theme th {
+            background-color: #1e1e1e;
+            color: #f5f5f5;
+        }
+
+        body.dark-theme .hero button {
+            color: black; /* Черный цвет текста */
+        }
+        
+        tr:hover {
+            background-color: #e0e0e0;
+        }
+        body.dark-theme tr:hover {
+            background-color: #2c2c2c;
+        }
+        .positive {
+            color: #4CAF50;
+        }
+        .negative {
+            color: #FF5722;
+        }
+        footer {
+            background: #2E7D32;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        body.dark-theme footer {
+            background: #1e1e1e;
+        }
+        footer a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="header-logo">
+                <img src="C:\Users\Home\Desktop\Новая папка\logo.svg" alt="Логотип">
+                <div class="btn-menu">
+                    <button class="btn-pairs">Торговля</button>
+                    <button class="btn-aboutUs">О нас</button>
+                    <button class="btn-support">Поддержка</button>
+                </div>
+            </div>
+            <div class="controls-container">
+                <label class="theme-switcher">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider"></span>
+                </label>
+                <div class="button-container">
+                    <button class="btn-register">Регистрация</button>
+                    <button class="btn-login">Вход</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h2>Торгуй с умом — зарабатывай с уверенностью</h2>
+        <p>Присоединяйся к платформе, которая помогает тебе достигать финансовых целей.</p>
+        <button class="btn-beg">Начать торговлю</button>
+    </section>
+
+    <section class="features">
+        <div class="feature">
+            <h3>Низкие комиссии</h3>
+            <p>Минимальные комиссии на все операции.</p>
+        </div>
+        <div class="feature">
+            <h3>Безопасность</h3>
+            <p>Ваши данные и средства под надёжной защитой.</p>
+        </div>
+        <div class="feature">
+            <h3>Удобство</h3>
+            <p>Простой и интуитивно понятный интерфейс.</p>
+        </div>
+    </section>
+
+    <!-- Графики -->
+    <section class="charts">
+        <div class="chart-container">
+            <canvas id="Chart"></canvas>
+        </div>
+    </section>
+
+    <!-- Таблица с валютами -->
+    <section class="currency-table">
+        <h2>50 самых торгуемых валют</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th onclick="sortTable('name')">Название </th>
+                    <th onclick="sortTable('marketCap')">Капитализация</th>
+                    <th onclick="sortTable('price')">Цена</th>
+                    <th onclick="sortTable('change')">Изменение (%)</th>
+                </tr>
+            </thead>
+            <tbody id="currency-table-body">
+                <!-- Данные будут добавлены с помощью JavaScript -->
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Футер -->
+    <footer>
+        <p>© 2025 BIToo. Все права защищены.</p>
+        <a href="#">Политика конфиденциальности</a>
+        <a href="#">Условия использования</a>
+    </footer>
+
+
+
+
+
+
+    
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        let Chart1; // Глобальная переменная для хранения графика
+
+        function updateChartColors(isDarkTheme) {
+            const textColor = isDarkTheme ? '#f5f5f5' : '#000000';
+            const gridColor = isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.4)';
+
+            if (Chart1) {
+                Chart1.options.scales.x.ticks.color = textColor;
+                Chart1.options.scales.x.grid.color = gridColor;
+                Chart1.options.scales.y.ticks.color = textColor;
+                Chart1.options.scales.y.grid.color = gridColor;
+                Chart1.options.plugins.legend.labels.color = textColor; // Цвет текста легенды
+                Chart1.update();
+            }
+        }
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-theme');
+            themeToggle.checked = true;
+            updateChartColors(true); // Обновляем цвета графика для темной темы
+        }
+
+        function updateAxisTitleColors() {
+            const isDarkTheme = body.classList.contains('dark-theme');
+            if (Chart1) {
+                Chart1.options.scales.x.title.color = isDarkTheme ? '#f5f5f5' : '#000000';
+                Chart1.options.scales.y.title.color = isDarkTheme ? '#f5f5f5' : '#000000';
+                Chart1.update();
+            }
+        }
+
+        // Переключение темы
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                body.classList.add('dark-theme');
+                localStorage.setItem('theme', 'dark');
+                updateChartColors(true); // Обновляем цвета графика для темной темы
+            } else {
+                body.classList.remove('dark-theme');
+                localStorage.setItem('theme', 'light');
+                updateChartColors(false); // Обновляем цвета графика для светлой темы
+            }
+            updateAxisTitleColors();
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('Chart').getContext('2d');
+            const data = {
+                labels: [], 
+                datasets: [
+                    {
+                        label: 'Цена',
+                        data: [], 
+                        borderColor: '#4CAF50', 
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)', 
+                        borderWidth: 2,
+                        fill: true,
+                        pointRadius: 0, 
+                    },
+                    {
+                        data: [], 
+                        borderColor: '#FF5722', 
+                        borderWidth: 1,
+                        borderDash: [5, 5], 
+                        pointRadius: 0, 
+                        fill: false,
+                    }
+                ]
+            };
+
+            const dottedLine = {
+                id: 'dottedLine',
+                beforeDatasetsDraw(chart, args, pluginOptions) {
+                    const { ctx, data, chartArea: { left, right, width }, scales: { x, y } } = chart;
+                    if (data.datasets[0].data.length === 0) {
+                        return; 
+                    }
+                    const startingPoint = data.datasets[0].data[data.datasets[0].data.length - 1]; 
+
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([1, 5]);
+                    ctx.strokeStyle = 'rgba(102, 102, 102, 1)';
+                    ctx.moveTo(left, y.getPixelForValue(startingPoint));
+                    ctx.lineTo(right, y.getPixelForValue(startingPoint));
+                    ctx.stroke();
+                    ctx.closePath();
+                    ctx.setLineDash([]);
+
+                    ctx.beginPath();
+                    ctx.fillStyle = 'rgba(102, 102, 102, 1)';
+                    ctx.fillRect(0, y.getPixelForValue(startingPoint) - 10, left, 20);
+                    ctx.closePath();
+
+                    ctx.font = '12px sans-serif';
+                    ctx.fillStyle = 'white';
+                    ctx.textBaseline = 'middle';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(startingPoint.toFixed(2), left / 2, y.getPixelForValue(startingPoint));
+                }
+            };
+
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    },
+                    scales: {
+                        x: {
+                            type: 'category',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'Время',
+                                color: body.classList.contains('dark-theme') ? '#f5f5f5' : '#000000',
+                            },
+                            ticks: {
+                                maxTicksLimit: 7,
+                                color: body.classList.contains('dark-theme') ? '#f5f5f5' : '#000000',
+                            },
+                            grid: {
+                                color: body.classList.contains('dark-theme') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Цена',
+                                color: body.classList.contains('dark-theme') ? '#f5f5f5' : '#000000',
+                            },
+                            ticks: {
+                                color: body.classList.contains('dark-theme') ? '#f5f5f5' : '#000000',
+                                maxTicksLimit: 5,
+                            },
+                            grid: {
+                                color: body.classList.contains('dark-theme') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false,
+                            labels: {
+                                color: body.classList.contains('dark-theme') ? '#f5f5f5' : '#000000', // Цвет текста легенды
+                                font: {
+                                    size: 14,
+                                }
+                            }
+                        },
+                        tooltip: {
+                            enabled: true,
+                            backgroundColor: body.classList.contains('dark-theme') ? '#1e1e1e' : '#ffffff',
+                            titleColor: body.classList.contains('dark-theme') ? '#f5f5f5' : '#000000',
+                            bodyColor: body.classList.contains('dark-theme') ? '#f5f5f5' : '#000000',
+                            borderColor: '#4CAF50',
+                            borderWidth: 1,
+                        }
+                    }
+                },
+                plugins: [dottedLine]
+            };
+
+            Chart1 = new Chart(ctx, config);
+            let massOfTimestamps = [];
+            
+            function getRandomData(){
+                let digit = Math.floor(Math.random() * 10000 + 20000);
+                let timestamp_loc = new Date()
+                let date = timestamp_loc.toLocaleTimeString();
+                
+
+                if(Chart1.data.labels.length > 10){
+                    massOfTimestamps.shift();
+                    Chart1.data.labels.shift();
+                    Chart1.data.datasets[0].data.shift();
+                }
+                massOfTimestamps.push(timestamp_loc);
+                Chart1.data.datasets[0].data.push(digit);
+                Chart1.data.labels.push(date);
+            }
+            
+            
+            setInterval(getRandomData, 5000);
+            getRandomData();
+
+            Chart1.canvas.addEventListener('mousemove', (e) => {
+                crosshairLine(Chart1, e);
+            });
+
+            function crosshairLine(chart, mousemove) {
+                const { canvas, ctx, chartArea: { left, right, top, bottom }} = chart;
+                const coorX = mousemove.offsetX;
+                const coorY = mousemove.offsetY;
+
+                chart.update('none');
+                ctx.restore();
+
+                if (coorX >= left && coorX <= right && coorY >= top && coorY <= bottom) {
+                    canvas.style.cursor = 'crosshair';
+                } else {
+                    canvas.style.cursor = 'default';
+                }
+
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = '#666';
+                ctx.setLineDash([3, 3]);
+
+                if (coorX > left && coorX < right && coorY > top && coorY < bottom) {
+                    ctx.beginPath();
+                    ctx.moveTo(left, coorY);
+                    ctx.lineTo(right, coorY);
+                    ctx.stroke();
+                    ctx.closePath();
+
+                    ctx.beginPath();
+                    ctx.moveTo(coorX, top);
+                    ctx.lineTo(coorX, bottom);
+                    ctx.stroke();
+                    ctx.closePath();
+
+                    crosshairLabel(chart, mousemove);
+                    crosshairPoint(chart, mousemove);
+                }
+            }
+
+            function crosshairLabel(chart, mousemove) {
+                    const { ctx, chartArea: { top, bottom, left, right }, scales: { x, y }, data } = chart;
+                    const coorX = mousemove.offsetX;
+                    const coorY = mousemove.offsetY;
+
+                    if (coorX < left || coorX > right || coorY < top || coorY > bottom) {
+                        return;
+                    }
+
+                    if (!data.labels || data.labels.length === 0) {
+                        console.error('Labels are missing or empty');
+                        return;
+                    }
+
+                    const segments = (right - left) / (data.labels.length - 1);
+                    const index = Math.floor((coorX - left) / segments);
+
+                    if (index < 0 || index >= data.labels.length) { 
+                        return;
+                    }
+
+                    const label = massOfTimestamps[index];
+                    const labelDate = massOfTimestamps[index];
+
+                    if (isNaN(massOfTimestamps[index].getTime())) {
+                        console.error('Invalid Date:', label);
+                        return;
+                    }
+
+                    const textWidth = ctx.measureText(labelDate.toLocaleString()).width + 10;
+
+                    ctx.font = '12px sans-serif';
+                    ctx.textBaseline = 'middle';
+                    ctx.textAlign = 'center';
+
+                    // Метка для оси Y (значение)
+                    ctx.beginPath();
+                    ctx.fillStyle = 'rgba(132, 132, 132, 1)';
+                    ctx.fillRect(0, coorY - 10, left, 20);
+                    ctx.closePath();
+                    ctx.fillStyle = 'white';
+                    ctx.fillText(y.getValueForPixel(coorY).toFixed(2), left / 2, coorY);
+
+                    // Метка для оси X (время)
+                    ctx.beginPath();
+                    ctx.fillStyle = 'rgba(132, 132, 132, 1)';
+                    ctx.fillRect(coorX - (textWidth / 2), bottom, textWidth, 20);
+                    ctx.closePath();
+                    ctx.fillStyle = 'white';
+                    ctx.fillText(labelDate.toLocaleString(), coorX, bottom + 10);
+                }
+
+            function crosshairPoint(chart, mousemove) {
+                const { ctx, data, chartArea: { top, bottom, left, right }, scales: { x, y } } = chart;
+                const coorX = mousemove.offsetX;
+                const coorY = mousemove.offsetY;
+                
+                const segments = (right - left) / (data.labels.length - 1);
+                const index = Math.floor((coorX - left) / segments);
+                let yStart = y.getPixelForValue(data.datasets[0].data[index]);
+                let yEnd = y.getPixelForValue(data.datasets[0].data[index + 1]);
+                let yInterpolation = yStart + ((yEnd - yStart) / segments * (coorX - x.getPixelForValue(data.labels[index])));
+              
+                const yValue = y.getPixelForValue(data.datasets[0].data[data.datasets[0].data.length - 1]);
+
+                ctx.beginPath();
+                ctx.strokeStyle = '#666';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([]);
+
+                if (coorY < yValue) {
+                    ctx.fillStyle = 'rgba(75, 192, 192, 1)';
+                } else {
+                    ctx.fillStyle = 'rgba(255, 26, 104, 1)';
+                }
+
+                ctx.arc(coorX, yInterpolation, 5, 0, Math.PI * 2, false);
+                ctx.fill();
+                ctx.stroke();
+            }
+        });
+
+        // Генерация случайных данных для таблицы
+        const currencies = [
+            "Bitcoin (BTC)", "Ethereum (ETH)", "Binance Coin (BNB)", "Cardano (ADA)", "Solana (SOL)",
+            "XRP (XRP)", "Polkadot (DOT)", "Dogecoin (DOGE)", "Avalanche (AVAX)", "Litecoin (LTC)",
+            "Chainlink (LINK)", "Bitcoin Cash (BCH)", "Algorand (ALGO)", "Stellar (XLM)", "VeChain (VET)",
+            "Cosmos (ATOM)", "Uniswap (UNI)", "Polygon (MATIC)", "Terra (LUNA)", "Axie Infinity (AXS)",
+            "Filecoin (FIL)", "THETA (THETA)", "FTX Token (FTT)", "TRON (TRX)", "Ethereum Classic (ETC)",
+            "Monero (XMR)", "Tezos (XTZ)", "EOS (EOS)", "Klaytn (KLAY)", "IOTA (MIOTA)",
+            "Neo (NEO)", "Bitcoin SV (BSV)", "Waves (WAVES)", "Dash (DASH)", "Zcash (ZEC)",
+            "Decred (DCR)", "Synthetix (SNX)", "Compound (COMP)", "Aave (AAVE)", "Maker (MKR)",
+            "Yearn.Finance (YFI)", "SushiSwap (SUSHI)", "Curve DAO Token (CRV)", "Balancer (BAL)", "Ren (REN)",
+            "0x (ZRX)", "Bancor (BNT)", "Kyber Network (KNC)", "Loopring (LRC)", "Reserve Rights (RSR)"
+        ];
+
+        const currencyTableBody = document.getElementById('currency-table-body');
+
+        function generateRandomCurrencyData() {
+            const randomMarketCap = Math.random() * 1000000000000; // Случайное число от 0 до 1 триллиона
+            const randomPrice = Math.random() * 10000; // Случайное число от 0 до 10,000
+            const randomChange = (Math.random() * 20 - 10).toFixed(2); // Случайное изменение от -10% до +10%
+
+            // Форматируем капитализацию
+            let formattedMarketCap;
+            if (randomMarketCap >= 1000000000) {
+                formattedMarketCap = `$${(randomMarketCap / 1000000000).toFixed(0)}B`; // Миллиарды
+            } else if (randomMarketCap >= 1000000) {
+                formattedMarketCap = `$${(randomMarketCap / 1000000).toFixed(0)}M`; // Миллионы
+            } else {
+                formattedMarketCap = `$${randomMarketCap.toFixed(2)}`; // Меньше миллиона
+            }
+
+            // Форматируем цену
+            const formattedPrice = `$${randomPrice.toFixed(2)}`;
+
+            return {
+                name: currencies[Math.floor(Math.random() * currencies.length)],
+                marketCap: formattedMarketCap,
+                price: formattedPrice,
+                change: randomChange
+            };
+        }
+
+        let currencyData = []; // Массив для хранения данных таблицы
+
+        function renderCurrencyTable() {
+            currencyTableBody.innerHTML = ''; // Очищаем таблицу
+            currencyData.forEach(currency => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${currency.name}</td>
+                    <td>${currency.marketCap}</td>
+                    <td>${currency.price}</td>
+                    <td class="${currency.change >= 0 ? 'positive' : 'negative'}">${currency.change}%</td>
+                `;
+                row.addEventListener('click', () => {
+                    currentCurrency = currency.name.split(' ')[1].replace(/[()]/g, ''); // Извлекаем тикер валюты
+                    Chart1.data.datasets[0].label = `${currency.name} Цена`; // Обновляем легенду графика
+                    Chart1.update();
+                });
+                currencyTableBody.appendChild(row);
+            });
+        }
+
+        // Первоначальная генерация данных
+        for (let i = 0; i < 50; i++) {
+            currencyData.push(generateRandomCurrencyData());
+        }
+        renderCurrencyTable();
+
+        // Функция сортировки таблицы
+        function sortTable(column) {
+            const th = document.querySelector(`th[onclick="sortTable('${column}')"]`);
+            const isSorted = th.getAttribute('data-sorted') === 'true';
+
+            // Сбрасываем сортировку для всех заголовков
+            document.querySelectorAll('th').forEach(th => {
+                th.setAttribute('data-sorted', 'false');
+                th.innerHTML = th.innerHTML.replace('🔴', '🟢'); // Возвращаем зелёный круг
+            });
+
+            if (!isSorted) {
+                // Сортировка по выбранному столбцу
+                currencyData.sort((a, b) => {
+                    if (column === 'name') {
+                        return a.name.localeCompare(b.name); // Сортировка по алфавиту
+                    } else if (column === 'marketCap') {
+                        const aValue = parseFloat(a.marketCap.replace(/[^0-9.]/g, ''));
+                        const bValue = parseFloat(b.marketCap.replace(/[^0-9.]/g, ''));
+                        return aValue - bValue; // Сортировка по числовому значению
+                    } else if (column === 'price') {
+                        const aValue = parseFloat(a.price.replace(/[^0-9.]/g, ''));
+                        const bValue = parseFloat(b.price.replace(/[^0-9.]/g, ''));
+                        return aValue - bValue; // Сортировка по числовому значению
+                    } else if (column === 'change') {
+                        return parseFloat(a.change) - parseFloat(b.change); // Сортировка по изменению
+                    }
+                });
+
+                th.setAttribute('data-sorted', 'true');
+                th.innerHTML = th.innerHTML.replace('🟢', '🔴'); // Меняем круг на красный
+            } else {
+                // Если уже отсортировано, сбрасываем сортировку
+                currencyData = [];
+                for (let i = 0; i < 50; i++) {
+                    currencyData.push(generateRandomCurrencyData());
+                }
+            }
+
+            renderCurrencyTable();
+        }
+    </script>
+</body>
+</html>
